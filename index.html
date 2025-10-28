@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Virtual Lamp - Tech Wave 2025</title>
+
+<style>
+  body {
+    margin: 0;
+    background-color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  #container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #title {
+    font-size: 60px;
+    color: #FFD700;
+    font-family: "Cinzel", serif;
+    margin-bottom: 20px;
+    text-align: center;
+    text-shadow: 
+      0 0 10px #FFD700, 
+      0 0 20px #FFD700, 
+      0 0 30px #FFA500, 
+      0 0 40px #FFA500;
+    animation: glow 2s infinite alternate;
+  }
+
+  @keyframes glow {
+    0% { text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 30px #FFA500, 0 0 40px #FFA500; }
+    50% { text-shadow: 0 0 20px #FFD700, 0 0 30px #FFD700, 0 0 40px #FFA500, 0 0 50px #FFA500; }
+    100% { text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 30px #FFA500, 0 0 40px #FFA500; }
+  }
+
+  #lamp-container {
+    position: relative;
+    width: 400px;
+    height: auto;
+  }
+
+  #lamp {
+    width: 100%;
+    display: block;
+  }
+
+  .flame {
+    position: absolute;
+    width: 40px;
+    height: 80px;
+    display: none;
+    pointer-events: none;
+    bottom: 140px; /* adjust relative to lamp bottom */
+    transform: translateX(-50%);
+    animation: flicker 1.5s infinite ease-in-out;
+    opacity: 0.95;
+  }
+
+  /* Horizontal positions of flames */
+  #flame1 { left: 142px; }
+  #flame2 { left: 168px; }
+  #flame3 { left: 196px; }
+  #flame4 { left: 224px; }
+  #flame5 { left: 252px; }
+
+  @keyframes flicker {
+    0% { opacity: 0.85; transform: translateX(-50%) scale(1); }
+    50% { opacity: 1; transform: translateX(-50%) scale(1.04); }
+    100% { opacity: 0.9; transform: translateX(-50%) scale(1); }
+  }
+
+  #status {
+    color: white;
+    margin-top: 20px;
+    font-size: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div id="container">
+  <div id="title">Tech Wave 2025</div>
+
+  <div id="lamp-container">
+    <img id="lamp" src="lamp.png" alt="Lamp">
+    <img id="flame1" class="flame" src="flame.png">
+    <img id="flame2" class="flame" src="flame.png">
+    <img id="flame3" class="flame" src="flame.png">
+    <img id="flame4" class="flame" src="flame.png">
+    <img id="flame5" class="flame" src="flame.png">
+  </div>
+
+  <div id="status">Connecting to server...</div>
+</div>
+
+<audio id="flameSound" src="flame-sound.mp3"></audio>
+
+<script>
+const vipCodes = ["VIP001", "VIP002", "VIP003", "VIP004", "VIP005"];
+const ws = new WebSocket("wss://YOUR_RENDER_APP_NAME.onrender.com"); // 👈 change this after deploying
+const status = document.getElementById("status");
+
+ws.onopen = () => {
+  status.textContent = "Connected to WebSocket 🟢";
+  console.log("Connected to WebSocket server");
+};
+
+ws.onerror = (err) => {
+  console.error("WebSocket error:", err);
+  status.textContent = "Connection error ⚠️";
+};
+
+ws.onclose = () => {
+  status.textContent = "Disconnected 🔴";
+};
+
+// Handle incoming messages (VIP scanned)
+ws.onmessage = (event) => {
+  const code = event.data.trim().toUpperCase();
+  console.log("Received:", code);
+
+  if (vipCodes.includes(code)) {
+    const index = vipCodes.indexOf(code);
+    const flame = document.getElementById(`flame${index+1}`);
+    flame.style.display = "block";
+    document.getElementById("flameSound").play();
+  }
+};
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Virtual Lamp - Tech Wave 2025</title>
+
+<style>
+  body {
+    margin: 0;
+    background-color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  #container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #title {
+    font-size: 60px;
+    color: #FFD700;
+    font-family: "Cinzel", serif;
+    margin-bottom: 20px;
+    text-align: center;
+    text-shadow: 
+      0 0 10px #FFD700, 
+      0 0 20px #FFD700, 
+      0 0 30px #FFA500, 
+      0 0 40px #FFA500;
+    animation: glow 2s infinite alternate;
+  }
+
+  @keyframes glow {
+    0% { text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 30px #FFA500, 0 0 40px #FFA500; }
+    50% { text-shadow: 0 0 20px #FFD700, 0 0 30px #FFD700, 0 0 40px #FFA500, 0 0 50px #FFA500; }
+    100% { text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 30px #FFA500, 0 0 40px #FFA500; }
+  }
+
+  #lamp-container {
+    position: relative;
+    width: 400px;
+    height: auto;
+  }
+
+  #lamp {
+    width: 100%;
+    display: block;
+  }
+
+  .flame {
+    position: absolute;
+    width: 40px;
+    height: 80px;
+    display: none;
+    pointer-events: none;
+    bottom: 140px; /* adjust relative to lamp bottom */
+    transform: translateX(-50%);
+    animation: flicker 1.5s infinite ease-in-out;
+    opacity: 0.95;
+  }
+
+  /* Horizontal positions of flames */
+  #flame1 { left: 142px; }
+  #flame2 { left: 168px; }
+  #flame3 { left: 196px; }
+  #flame4 { left: 224px; }
+  #flame5 { left: 252px; }
+
+  @keyframes flicker {
+    0% { opacity: 0.85; transform: translateX(-50%) scale(1); }
+    50% { opacity: 1; transform: translateX(-50%) scale(1.04); }
+    100% { opacity: 0.9; transform: translateX(-50%) scale(1); }
+  }
+
+  #status {
+    color: white;
+    margin-top: 20px;
+    font-size: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div id="container">
+  <div id="title">Tech Wave 2025</div>
+
+  <div id="lamp-container">
+    <img id="lamp" src="lamp.png" alt="Lamp">
+    <img id="flame1" class="flame" src="flame.png">
+    <img id="flame2" class="flame" src="flame.png">
+    <img id="flame3" class="flame" src="flame.png">
+    <img id="flame4" class="flame" src="flame.png">
+    <img id="flame5" class="flame" src="flame.png">
+  </div>
+
+  <div id="status">Connecting to server...</div>
+</div>
+
+<audio id="flameSound" src="flame-sound.mp3"></audio>
+
+<script>
+const vipCodes = ["VIP001", "VIP002", "VIP003", "VIP004", "VIP005"];
+const ws = new WebSocket("wss://YOUR_RENDER_APP_NAME.onrender.com"); // 👈 change this after deploying
+const status = document.getElementById("status");
+
+ws.onopen = () => {
+  status.textContent = "Connected to WebSocket 🟢";
+  console.log("Connected to WebSocket server");
+};
+
+ws.onerror = (err) => {
+  console.error("WebSocket error:", err);
+  status.textContent = "Connection error ⚠️";
+};
+
+ws.onclose = () => {
+  status.textContent = "Disconnected 🔴";
+};
+
+// Handle incoming messages (VIP scanned)
+ws.onmessage = (event) => {
+  const code = event.data.trim().toUpperCase();
+  console.log("Received:", code);
+
+  if (vipCodes.includes(code)) {
+    const index = vipCodes.indexOf(code);
+    const flame = document.getElementById(`flame${index+1}`);
+    flame.style.display = "block";
+    document.getElementById("flameSound").play();
+  }
+};
+</script>
+
+</body>
+</html>
