@@ -11,6 +11,11 @@ const wss = new WebSocket.Server({ server });
 // Serve static files from 'public' folder
 app.use(express.static(path.join(__dirname, "public")));
 
+// ✅ Add this route so visiting "/" loads your homepage
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
 wss.on("connection", (ws) => {
   console.log("🔗 New WebSocket connection");
 
