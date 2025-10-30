@@ -8,20 +8,22 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-// Serve static files from 'public' folder
+// ✅ Serve static files from 'public' folder
 app.use(express.static(path.join(__dirname, "public")));
 
-// ✅ Add this route so visiting "/" loads your homepage
+// ✅ Handle root route explicitly
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
+// ✅ WebSocket server logic
 wss.on("connection", (ws) => {
   console.log("🔗 New WebSocket connection");
 
   ws.on("message", (message) => {
     console.log("📩 Received:", message.toString());
-    // Broadcast to all connected clients
+
+    // Broadcast message to all connected clients
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(message.toString());
@@ -32,8 +34,8 @@ wss.on("connection", (ws) => {
   ws.on("close", () => console.log("❌ Client disconnected"));
 });
 
-// Start server
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+// ✅ Use Fly.io's provided PORT
+const PORT = process.env.PORT || 8080;
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
