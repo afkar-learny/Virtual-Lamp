@@ -14,7 +14,6 @@
     justify-content: center;
     height: 100vh;
     overflow: hidden;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
 
   #container {
@@ -29,351 +28,167 @@
     font-family: "Cinzel", serif;
     margin-bottom: 20px;
     text-align: center;
-    text-shadow: 
-      0 0 10px #FFD700, 
-      0 0 20px #FFD700, 
-      0 0 30px #FFA500, 
+    text-shadow:
+      0 0 10px #FFD700,
+      0 0 20px #FFD700,
+      0 0 30px #FFA500,
       0 0 40px #FFA500;
     animation: glow 2s infinite alternate;
   }
 
   @keyframes glow {
-    0% { text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 30px #FFA500, 0 0 40px #FFA500; }
-    50% { text-shadow: 0 0 20px #FFD700, 0 0 30px #FFD700, 0 0 40px #FFA500, 0 0 50px #FFA500; }
-    100% { text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 30px #FFA500, 0 0 40px #FFA500; }
+    0% { text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700; }
+    100% { text-shadow: 0 0 15px #FFA500, 0 0 30px #FFA500; }
   }
 
   #lamp-container {
     position: relative;
     width: 400px;
-    height: 500px;
-    display: flex;
-    justify-content: center;
+    height: auto;
   }
 
-  /* 3D Lamp Base */
-  .lamp-base {
-    position: absolute;
-    bottom: 0;
-    width: 180px;
-    height: 30px;
-    background: linear-gradient(to right, #8B4513, #A0522D, #8B4513);
-    border-radius: 10px 10px 5px 5px;
-    box-shadow: 
-      0 5px 15px rgba(0,0,0,0.7),
-      inset 0 2px 5px rgba(255,255,255,0.2);
-    z-index: 10;
+  #lamp {
+    width: 100%;
+    display: block;
   }
 
-  /* Lamp Stand */
-  .lamp-stand {
+  /* --- FLAMES --- */
+  .flame {
     position: absolute;
-    bottom: 30px;
-    width: 20px;
-    height: 200px;
-    background: linear-gradient(to right, #696969, #808080, #696969);
-    border-radius: 5px;
-    box-shadow: 
-      0 0 10px rgba(0,0,0,0.5),
-      inset 0 0 10px rgba(255,255,255,0.1);
-    z-index: 9;
-  }
-
-  /* Lamp Shade */
-  .lamp-shade {
-    position: absolute;
-    bottom: 230px;
-    width: 250px;
-    height: 120px;
-    background: linear-gradient(to bottom, #8B0000, #B22222, #8B0000);
-    border-radius: 50% 50% 40% 40%;
-    box-shadow: 
-      0 10px 20px rgba(0,0,0,0.7),
-      inset 0 5px 15px rgba(255,255,255,0.1);
-    z-index: 8;
-    transform: perspective(500px) rotateX(10deg);
-  }
-
-  /* Lamp Shade Top */
-  .lamp-shade-top {
-    position: absolute;
-    bottom: 350px;
-    width: 200px;
-    height: 30px;
-    background: linear-gradient(to bottom, #8B0000, #A52A2A);
-    border-radius: 50% 50% 0 0;
-    z-index: 7;
-  }
-
-  /* Flame Container */
-  .flame-container {
-    position: absolute;
-    bottom: 340px;
     width: 40px;
     height: 70px;
-    z-index: 11;
     display: none;
     pointer-events: none;
+    bottom: 330px; /* Adjust to match lamp top */
+    transform: translateX(-50%) scale(0.5);
+    opacity: 0;
+    animation: sway 1.5s infinite ease-in-out;
+    transition: opacity 1s ease, transform 1s ease;
+    filter: drop-shadow(0 0 12px orange);
   }
 
-  /* Flame Base */
-  .flame-base {
-    position: absolute;
-    bottom: 0;
-    width: 20px;
-    height: 10px;
-    background: #FF8C00;
-    border-radius: 50%;
-    filter: blur(5px);
-    opacity: 0.8;
+  /* Flame horizontal placement */
+  #flame1 { left: 142px; animation-delay: 0s; }
+  #flame2 { left: 168px; animation-delay: 0.2s; }
+  #flame3 { left: 196px; animation-delay: 0.4s; }
+  #flame4 { left: 224px; animation-delay: 0.1s; }
+  #flame5 { left: 252px; animation-delay: 0.3s; }
+
+  /* Sideways gentle motion only */
+  @keyframes sway {
+    0% { transform: translate(-50%, 0) rotate(-2deg) scale(1); }
+    50% { transform: translate(-48%, 0) rotate(2deg) scale(1.03); }
+    100% { transform: translate(-50%, 0) rotate(-2deg) scale(1); }
   }
 
-  /* Flame Body */
-  .flame-body {
-    position: absolute;
-    bottom: 10px;
-    width: 20px;
-    height: 50px;
-    background: linear-gradient(to top, #FF4500, #FF8C00, #FFD700);
-    border-radius: 50% 50% 20% 20%;
-    filter: blur(2px);
-    animation: flameFlicker 1.5s infinite ease-in-out;
-    transform-origin: bottom center;
-  }
-
-  /* Flame Tip */
-  .flame-tip {
-    position: absolute;
-    bottom: 60px;
-    width: 10px;
-    height: 15px;
-    background: #FFD700;
-    border-radius: 50% 50% 20% 20%;
-    filter: blur(3px);
-    animation: flameTipFlicker 1.2s infinite ease-in-out;
-    transform-origin: bottom center;
-  }
-
-  @keyframes flameFlicker {
-    0%, 100% { 
-      transform: scaleY(1) scaleX(1); 
-      opacity: 0.9;
-    }
-    25% { 
-      transform: scaleY(1.1) scaleX(0.95); 
-      opacity: 1;
-    }
-    50% { 
-      transform: scaleY(0.95) scaleX(1.05); 
-      opacity: 0.85;
-    }
-    75% { 
-      transform: scaleY(1.05) scaleX(0.98); 
-      opacity: 0.95;
-    }
-  }
-
-  @keyframes flameTipFlicker {
-    0%, 100% { 
-      transform: scaleY(1) scaleX(1); 
-      opacity: 0.8;
-    }
-    50% { 
-      transform: scaleY(1.2) scaleX(0.9); 
-      opacity: 1;
-    }
-  }
-
-  /* Flame positions */
-  #flame-container1 { left: 142px; }
-  #flame-container2 { left: 168px; }
-  #flame-container3 { left: 196px; }
-  #flame-container4 { left: 224px; }
-  #flame-container5 { left: 252px; }
-
-  /* Soft Glow Effect */
+  /* --- Soft glow under lamp --- */
   #glow {
     position: absolute;
-    bottom: 260px;
+    bottom: 330px;
     left: 50%;
     transform: translateX(-50%);
-    width: 120px;
-    height: 40px;
-    background: radial-gradient(ellipse at center, rgba(255,165,0,0.7), transparent 80%);
+    width: 100px;
+    height: 30px;
+    background: radial-gradient(ellipse at center, rgba(255,165,0,0.4), transparent 80%);
     border-radius: 50%;
     opacity: 0;
     transition: opacity 2s ease-in-out;
     pointer-events: none;
-    z-index: 6;
   }
 
   #status {
     color: white;
     margin-top: 20px;
     font-size: 20px;
-    text-align: center;
-  }
-
-  /* Controls for testing */
-  .controls {
-    margin-top: 20px;
-    display: flex;
-    gap: 10px;
-  }
-
-  button {
-    background: #FFD700;
-    color: black;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s;
-  }
-
-  button:hover {
-    background: #FFA500;
-    transform: scale(1.05);
   }
 </style>
 </head>
+
 <body>
+  <div id="container">
+    <div id="title">Tech Wave 2025</div>
 
-<div id="container">
-  <div id="title">Tech Wave 2025</div>
+    <div id="lamp-container">
+      <img id="lamp" src="lamp.png" alt="Lamp">
+      <div id="glow"></div>
+      <img id="flame1" class="flame" src="flame.png" alt="flame">
+      <img id="flame2" class="flame" src="flame.png" alt="flame">
+      <img id="flame3" class="flame" src="flame.png" alt="flame">
+      <img id="flame4" class="flame" src="flame.png" alt="flame">
+      <img id="flame5" class="flame" src="flame.png" alt="flame">
+    </div>
 
-  <div id="lamp-container">
-    <!-- 3D Lamp Structure -->
-    <div class="lamp-base"></div>
-    <div class="lamp-stand"></div>
-    <div class="lamp-shade"></div>
-    <div class="lamp-shade-top"></div>
-    
-    <!-- Flame Containers -->
-    <div id="flame-container1" class="flame-container">
-      <div class="flame-base"></div>
-      <div class="flame-body"></div>
-      <div class="flame-tip"></div>
-    </div>
-    <div id="flame-container2" class="flame-container">
-      <div class="flame-base"></div>
-      <div class="flame-body"></div>
-      <div class="flame-tip"></div>
-    </div>
-    <div id="flame-container3" class="flame-container">
-      <div class="flame-base"></div>
-      <div class="flame-body"></div>
-      <div class="flame-tip"></div>
-    </div>
-    <div id="flame-container4" class="flame-container">
-      <div class="flame-base"></div>
-      <div class="flame-body"></div>
-      <div class="flame-tip"></div>
-    </div>
-    <div id="flame-container5" class="flame-container">
-      <div class="flame-base"></div>
-      <div class="flame-body"></div>
-      <div class="flame-tip"></div>
-    </div>
-    
-    <!-- Glow Effect -->
-    <div id="glow"></div>
+    <div id="status">Connecting to server...</div>
   </div>
 
-  <div id="status">Connecting to server...</div>
-  
-  <!-- Controls for testing without WebSocket -->
-  <div class="controls">
-    <button onclick="igniteFlame(0)">Ignite Flame 1</button>
-    <button onclick="igniteFlame(1)">Ignite Flame 2</button>
-    <button onclick="igniteFlame(2)">Ignite Flame 3</button>
-    <button onclick="igniteFlame(3)">Ignite Flame 4</button>
-    <button onclick="igniteFlame(4)">Ignite Flame 5</button>
-  </div>
-</div>
+  <audio id="flameSound" src="flame-sound.mp3"></audio>
 
-<audio id="flameSound" src="flame-sound.mp3"></audio>
+  <script>
+    const vipCodes = ["VIP001", "VIP002", "VIP003", "VIP004", "VIP005"];
+    const ws = new WebSocket("wss://virtual-lamp.fly.dev");  // Change to your Fly.io WebSocket URL
+    const status = document.getElementById("status");
 
-<script>
-const vipCodes = ["VIP001", "VIP002", "VIP003", "VIP004", "VIP005"];
-const status = document.getElementById("status");
+    ws.onopen = () => {
+      status.textContent = "Connected to WebSocket 🟢";
+      console.log("Connected to WebSocket server");
+    };
 
-// Simulate WebSocket connection for demo
-setTimeout(() => {
-  status.textContent = "Connected to WebSocket 🟢";
-}, 1500);
+    ws.onerror = (err) => {
+      console.error("WebSocket error:", err);
+      status.textContent = "Connection error ⚠️";
+    };
 
-// Function to ignite a flame (for testing)
-function igniteFlame(index) {
-  const flameContainer = document.getElementById(`flame-container${index + 1}`);
-  const glow = document.getElementById("glow");
-  const sound = document.getElementById("flameSound");
+    ws.onclose = () => {
+      status.textContent = "Disconnected 🔴";
+    };
 
-  // Gradual ignition effect
-  flameContainer.style.display = "block";
-  let opacity = 0;
-  flameContainer.style.opacity = 0;
-  
-  const fadeIn = setInterval(() => {
-    opacity += 0.05;
-    flameContainer.style.opacity = opacity;
-    if (opacity >= 1) {
-      clearInterval(fadeIn);
-    }
-  }, 50);
+    ws.onmessage = (event) => {
+      const code = event.data.trim().toUpperCase();
+      console.log("Received:", code);
 
-  // Glow effect fade-in
-  glow.style.opacity = 1;
+      if (vipCodes.includes(code)) {
+        const index = vipCodes.indexOf(code);
+        const flame = document.getElementById(`flame${index + 1}`);
+        const glow = document.getElementById("glow");
+        const sound = document.getElementById("flameSound");
 
-  // Flame sound fade-in
-  if (sound) {
-    sound.volume = 0;
-    sound.currentTime = 0;
-    sound.play();
+        // Gradual flame ignition
+        flame.style.display = "block";
+        let opacity = 0;
+        let scale = 0.5;
+        flame.style.opacity = 0;
+        flame.style.transform = "translateX(-50%) scale(0.5)";
 
-    let vol = 0;
-    const fadeSound = setInterval(() => {
-      if (vol < 1) {
-        vol += 0.05;
-        sound.volume = vol;
-      } else {
-        clearInterval(fadeSound);
+        const fadeIn = setInterval(() => {
+          opacity += 0.05;
+          scale += 0.03;
+          flame.style.opacity = opacity;
+          flame.style.transform = `translateX(-50%) scale(${scale})`;
+          if (opacity >= 1) {
+            clearInterval(fadeIn);
+            flame.style.transform = "translateX(-50%) scale(1)";
+          }
+        }, 50);
+
+        // Soft glow fade-in
+        glow.style.opacity = 1;
+
+        // Flame sound fade-in
+        sound.volume = 0;
+        sound.currentTime = 0;
+        sound.play();
+
+        let vol = 0;
+        const fadeSound = setInterval(() => {
+          if (vol < 1) {
+            vol += 0.05;
+            sound.volume = vol;
+          } else {
+            clearInterval(fadeSound);
+          }
+        }, 100);
       }
-    }, 100);
-  }
-}
-
-// WebSocket connection logic (commented out for demo)
-/*
-const ws = new WebSocket("wss://virtual-lamp.fly.dev");  // change if needed
-
-ws.onopen = () => {
-  status.textContent = "Connected to WebSocket 🟢";
-  console.log("Connected to WebSocket server");
-};
-
-ws.onerror = (err) => {
-  console.error("WebSocket error:", err);
-  status.textContent = "Connection error ⚠️";
-};
-
-ws.onclose = () => {
-  status.textContent = "Disconnected 🔴";
-};
-
-// When a VIP QR code is scanned
-ws.onmessage = (event) => {
-  const code = event.data.trim().toUpperCase();
-  console.log("Received:", code);
-
-  if (vipCodes.includes(code)) {
-    const index = vipCodes.indexOf(code);
-    igniteFlame(index);
-  }
-};
-*/
-</script>
-
+    };
+  </script>
 </body>
 </html>
