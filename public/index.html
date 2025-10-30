@@ -53,16 +53,19 @@
     display: block;
   }
 
+  /* --- FLAMES --- */
   .flame {
     position: absolute;
     width: 40px;
     height: 70px;
     display: none;
     pointer-events: none;
-    bottom: 300px;
-    transform: translateX(-50%);
+    bottom: 325px;
+    transform: translateX(-50%) scale(0.5);
     opacity: 0;
     animation: flicker 1.5s infinite ease-in-out, riseFlicker 2s infinite alternate;
+    filter: drop-shadow(0 0 20px orange);
+    transition: transform 1s ease-out, opacity 1s ease-in;
   }
 
   /* Horizontal positions of flames */
@@ -73,17 +76,32 @@
   #flame5 { left: 252px; animation-duration: 1.7s, 2.3s; }
 
   @keyframes flicker {
-    0% { opacity: 0.7; transform: translateX(-50%) scale(1); }
-    25% { opacity: 1; transform: translateX(-48%) scale(1.03); }
-    50% { opacity: 0.85; transform: translateX(-52%) scale(1.05); }
-    75% { opacity: 0.95; transform: translateX(-49%) scale(1.02); }
-    100% { opacity: 0.8; transform: translateX(-50%) scale(1); }
+    0%, 100% { opacity: 0.8; transform: translateX(-50%) scale(1); }
+    20% { opacity: 1; transform: translateX(-49%) scale(1.05); }
+    40% { opacity: 0.9; transform: translateX(-51%) scale(0.97); }
+    60% { opacity: 1; transform: translateX(-50%) scale(1.03); }
+    80% { opacity: 0.85; transform: translateX(-50%) scale(1.02); }
   }
 
   @keyframes riseFlicker {
-    0% { bottom: 300px; opacity: 0.8; }
-    50% { bottom: 305px; opacity: 1; }
-    100% { bottom: 310px; opacity: 0.85; }
+    0% { bottom: 325px; opacity: 0.8; }
+    50% { bottom: 330px; opacity: 1; }
+    100% { bottom: 340px; opacity: 0.85; }
+  }
+
+  /* --- SOFT GLOW EFFECT BELOW LAMP --- */
+  #glow {
+    position: absolute;
+    bottom: 260px; /* Adjust based on lamp size */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 40px;
+    background: radial-gradient(ellipse at center, rgba(255,165,0,0.7), transparent 80%);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 2s ease-in-out;
+    pointer-events: none;
   }
 
   #status {
@@ -100,6 +118,7 @@
 
   <div id="lamp-container">
     <img id="lamp" src="lamp.png" alt="Lamp">
+    <div id="glow"></div>
     <img id="flame1" class="flame" src="flame.png">
     <img id="flame2" class="flame" src="flame.png">
     <img id="flame3" class="flame" src="flame.png">
@@ -114,7 +133,7 @@
 
 <script>
 const vipCodes = ["VIP001", "VIP002", "VIP003", "VIP004", "VIP005"];
-const ws = new WebSocket("wss://virtual-lamp.fly.dev");  // Change to your deployed server
+const ws = new WebSocket("wss://virtual-lamp.fly.dev");  // change if needed
 const status = document.getElementById("status");
 
 ws.onopen = () => {
@@ -131,29 +150,52 @@ ws.onclose = () => {
   status.textContent = "Disconnected 🔴";
 };
 
-// Handle incoming messages (VIP scanned)
+// When a VIP QR code is scanned
 ws.onmessage = (event) => {
   const code = event.data.trim().toUpperCase();
   console.log("Received:", code);
 
   if (vipCodes.includes(code)) {
     const index = vipCodes.indexOf(code);
-    const flame = document.getElementById(`flame${index+1}`);
+    const flame = document.getElementById(`flame${index + 1}`);
+    const glow = document.getElementById("glow");
+    const sound = document.getElementById("flameSound");
+
+    // Gradual ignition effect
     flame.style.display = "block";
-    
-    // Gradual fade-in
     let opacity = 0;
+    let scale = 0.5;
     flame.style.opacity = 0;
+    flame.style.transform = "translateX(-50%) scale(0.5)";
+    
     const fadeIn = setInterval(() => {
       opacity += 0.05;
+      scale += 0.03;
       flame.style.opacity = opacity;
-      if (opacity >= 1) clearInterval(fadeIn);
+      flame.style.transform = `translateX(-50%) scale(${scale})`;
+      if (opacity >= 1) {
+        clearInterval(fadeIn);
+        flame.style.transform = "translateX(-50%) scale(1)";
+      }
     }, 50);
 
-    // Play flame sound
-    const sound = document.getElementById("flameSound");
+    // Glow effect fade-in
+    glow.style.opacity = 1;
+
+    // Flame sound fade-in
+    sound.volume = 0;
     sound.currentTime = 0;
     sound.play();
+
+    let vol = 0;
+    const fadeSound = setInterval(() => {
+      if (vol < 1) {
+        vol += 0.05;
+        sound.volume = vol;
+      } else {
+        clearInterval(fadeSound);
+      }
+    }, 100);
   }
 };
 </script>
