@@ -56,26 +56,34 @@
   .flame {
     position: absolute;
     width: 40px;
-    height: 80px;
+    height: 70px;
     display: none;
     pointer-events: none;
-    bottom: 140px; /* adjust relative to lamp bottom */
+    bottom: 140px;
     transform: translateX(-50%);
-    animation: flicker 1.5s infinite ease-in-out;
-    opacity: 0.95;
+    opacity: 0;
+    animation: flicker 1.5s infinite ease-in-out, riseFlicker 2s infinite alternate;
   }
 
   /* Horizontal positions of flames */
-  #flame1 { left: 142px; }
-  #flame2 { left: 168px; }
-  #flame3 { left: 196px; }
-  #flame4 { left: 224px; }
-  #flame5 { left: 252px; }
+  #flame1 { left: 142px; animation-duration: 1.5s, 2s; }
+  #flame2 { left: 168px; animation-duration: 1.3s, 1.8s; }
+  #flame3 { left: 196px; animation-duration: 1.6s, 2.2s; }
+  #flame4 { left: 224px; animation-duration: 1.4s, 2.1s; }
+  #flame5 { left: 252px; animation-duration: 1.7s, 2.3s; }
 
   @keyframes flicker {
-    0% { opacity: 0.85; transform: translateX(-50%) scale(1); }
-    50% { opacity: 1; transform: translateX(-50%) scale(1.04); }
-    100% { opacity: 0.9; transform: translateX(-50%) scale(1); }
+    0% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+    25% { opacity: 1; transform: translateX(-48%) scale(1.03); }
+    50% { opacity: 0.85; transform: translateX(-52%) scale(1.05); }
+    75% { opacity: 0.95; transform: translateX(-49%) scale(1.02); }
+    100% { opacity: 0.8; transform: translateX(-50%) scale(1); }
+  }
+
+  @keyframes riseFlicker {
+    0% { bottom: 140px; opacity: 0.8; }
+    50% { bottom: 145px; opacity: 1; }
+    100% { bottom: 150px; opacity: 0.85; }
   }
 
   #status {
@@ -106,7 +114,7 @@
 
 <script>
 const vipCodes = ["VIP001", "VIP002", "VIP003", "VIP004", "VIP005"];
-const ws = new WebSocket("wss://virtual-lamp.fly.dev");  // 👈 change this after deploying
+const ws = new WebSocket("wss://virtual-lamp.fly.dev");  // Change to your deployed server
 const status = document.getElementById("status");
 
 ws.onopen = () => {
@@ -132,7 +140,20 @@ ws.onmessage = (event) => {
     const index = vipCodes.indexOf(code);
     const flame = document.getElementById(`flame${index+1}`);
     flame.style.display = "block";
-    document.getElementById("flameSound").play();
+    
+    // Gradual fade-in
+    let opacity = 0;
+    flame.style.opacity = 0;
+    const fadeIn = setInterval(() => {
+      opacity += 0.05;
+      flame.style.opacity = opacity;
+      if (opacity >= 1) clearInterval(fadeIn);
+    }, 50);
+
+    // Play flame sound
+    const sound = document.getElementById("flameSound");
+    sound.currentTime = 0;
+    sound.play();
   }
 };
 </script>
