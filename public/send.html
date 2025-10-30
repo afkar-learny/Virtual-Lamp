@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Send VIP Code</title>
+</head>
+<body>
+  <h2>Sending VIP Code...</h2>
+  <script>
+    // Get the code from the URL
+    const params = new URLSearchParams(window.location.search);
+    const vipCode = params.get("code");
+
+    // Connect to your WebSocket server
+    const ws = new WebSocket("wss://virtual-lamp.fly.dev"); // or wss://your-domain
+
+    ws.onopen = () => {
+      ws.send(vipCode);
+      document.body.innerHTML = `<h2>Sent VIP Code: ${vipCode}</h2>`;
+    };
+
+    ws.onerror = (err) => {
+      document.body.innerHTML = `<h2>WebSocket Error</h2>`;
+      console.error(err);
+    };
+  </script>
+</body>
+</html>
